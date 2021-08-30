@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = 16, 10
 import numpy as np
 import time
-from slowroll_computings import ns_v2
-from def_potentials import Vrge
+from B0_slowroll_computings import nsf, phi_starf, phi_0f
+from A_def_potentials import Vrge
 
 start_tot = time.process_time()
 
@@ -12,7 +12,7 @@ mphi = mpmathify('7446.949961062429469452587821770735257098219127860459429229360
 A6 = mpmathify('47072.6105683423108523859567035012099')
 lambda6 = mpmathify('4.49761902115191390429039481224163414e-2')
 count = 0
-side = 0 # vrai side est 2 side +1
+side = 1 # vrai side est 2 side +1
 step_A = mpmathify('0.8e-15')
 step_lambda = mpmathify('0.8e-17')
 grid = np.zeros((2*side+1,2*side+1))
@@ -21,11 +21,15 @@ for j in range(-side, side+1):
     for k in range(-side, side+1):
         start = time.process_time()
         lambda6_k = lambda6+k*step_lambda
-        grid[j+side][k+side] = ns_v2(lambda phi : Vrge(phi, 1, mphi, A6_j, lambda6_k))
+        V = lambda phi: Vrge(phi, 1, mphi, A6_j, lambda6_k)
+        phi_0 = phi_0f(V)
+        phi_star = phi_starf(V, phi_0)
+        nsjk = nsf(V, phi_star)
+        grid[j+side][k+side] = nsjk
         print('\n',grid)
         count += 1
         print("step "+ str(count) +"/"+str((2*side+1)**2)+" took "+str(time.process_time() - start) +" sec ",'\n')
-np.savetxt('[A lambda] grid', grid, delimiter = ', ')
+np.savetxt('C1_grid', grid, delimiter = ', ')
 print("total time for "+str((2*side+1)**2)+" steps took "+str(time.process_time() - start_tot) +" sec ")
 
 plt.figure(1)
@@ -34,7 +38,7 @@ cb = plt.colorbar()
 cb.set_label(label='ns', fontsize=18)
 plt.xlabel(r'$(\lambda_6-\lambda_{6centre})*1.25e17$', fontsize = 18)
 plt.ylabel(r'$(A_6-A_{6centre})*1.25e15$', fontsize = 18)
-plt.savefig('[A lambda] ns distrib')
+plt.savefig('C2_ns')
 
 plt.figure(2)
 palette = plt.matplotlib.colors.LinearSegmentedColormap('jet3',plt.cm.datad['jet'],2048)
@@ -44,4 +48,4 @@ cb = plt.colorbar()
 cb.set_label(label='log((ns-0.9665/0.0038)²)', fontsize=18)
 plt.xlabel(r'$(\lambda_6-\lambda_{6centre})*1.25e17+8$', fontsize = 18)
 plt.ylabel(r'$(A_6-A_{6centre})*1.25e15+8$', fontsize = 18)
-plt.savefig('[A lambda] chi2 distrib')
+plt.savefig('C3_chi2')
