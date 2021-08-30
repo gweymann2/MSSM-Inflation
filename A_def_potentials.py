@@ -2,7 +2,6 @@ from mpmath import *
 
 lnMpinGev = 42.334
 Mp = mp.exp(mpf(1) * lnMpinGev)
-plt.rcParams['figure.figsize'] = 16, 10
 mp.dps = 130
 
 
@@ -26,3 +25,5 @@ def Vrge(mu, xi, mphi_GUT, A6_GUT, lambda6_GUT):
     lambda6 = lambda6_GUT * (g2_GUT / g2) ** 6 * (g1_GUT / g1) ** (mp.mpf('6') / mp.mpf('11'))
     phi = mu
     return 0.5 * mphi2 * phi ** 2 - lambda6 * A6 / (6 * Mp ** 3) * phi ** 6 + lambda6 ** 2 * phi ** 10 / Mp ** 6
+
+# def Vapprox
