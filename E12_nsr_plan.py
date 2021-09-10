@@ -28,8 +28,8 @@ def generate_examples(phi0_start, alpha_start, delta_alpha):
 delta_alpha = [0.00000000000006*(0.0000000006/0.00000000000006)**(i/50) for i in range(50)]
 
 
-phi0_start = np.array([mp.mpf(phi0) for phi0 in np.array(pd.read_csv('E6_tree09665Inst.csv', dtype = str, index_col=0)['phi0B'])])
-alpha_start = np.array([mp.mpf(phi0) for phi0 in np.array(pd.read_csv('E6_tree09665Inst.csv', dtype = str, index_col=0)['alpha'])])
+phi0_start = np.array([mp.mpf(phi0) for phi0 in np.array(pd.read_csv('E11_tree09665Inst.csv', dtype = str, index_col=0)['phi0B'])])
+alpha_start = np.array([mp.mpf(phi0) for phi0 in np.array(pd.read_csv('E11_tree09665Inst.csv', dtype = str, index_col=0)['alpha'])])
 
 example_tot = []
 for i in range(50):
@@ -47,4 +47,4 @@ nsr = plot.subplots[2,1]
 nsr.semilogy()
 nsr.axis(ymin=10**-20,ymax=100)
 nsr.scatter(example_tot[0], example_tot[1], c=example_tot[2], cmap = 'gist_rainbow', marker = 's', s=1000)
-plot.fig.savefig('E8_triplot.png')
+plot.fig.savefig('E13_triplot.png')
