@@ -1,16 +1,13 @@
+from B0_slowroll_computings import *
+
 import mpmath as mp
 from mpmath import *
 
-# Plus basses sont les valeurs de phi0 qu'on veut explorer, plus haut on met dps, et plus on descend ligne 69
 mp.dps = 500
 mp.prec = 166
 
-import time
-
 lnMpinGev = mp.mpf('42.334')
 Mp = mp.exp(lnMpinGev)
-Pstar = mp.mpf('2.2030e-9')
-
 
 def norm_potential(x, alpha, phi0):
     return x ** mp.mpf('2') - mp.mpf('2') / 3 * alpha * x ** 6 + alpha / mp.mpf('5') * x ** 10
@@ -104,12 +101,11 @@ def alpha_from_phi0B_and_ns(phi0B, ns, lnRrad, Pstar):
                        solver='anderson', verbose=False)
 
 
-def aspic(lnRrad, ns_f, phi0B_start, phi0B_end, nphi0):
-    phi0B_list, xstar_list, alpha_list, mphi_list, A6_list, lambda6_list, ns_list, r_list = [], [], [], [], [], [], [], []
-    for i in range(nphi0):
-        start = time.process_time()
-
-        phi0B = phi0B_start * (phi0B_end / phi0B_start) ** (i / nphi0)
+def aspic(lnRrad, ns_f, phi0_input, Pstar):
+    phi0B_list, phistar_list, alpha_list, mphi_list, A6_list, lambda6_list, ns_list, r_list, alphas = [], [], [], [], [], [], [], [], []
+    nphi0 = len(phi0_input)
+    for i, phi0B in enumerate(phi0_input):
+        #         start = time.process_time()
 
         alpha = alpha_from_phi0B_and_ns(phi0B / Mp, ns_f, lnRrad, Pstar)
         phi0 = phi0B * ((5 * alpha + mp.sqrt(mp.mpf('25') * alpha ** 2 - mp.mpf('9'))) / (9 * alpha)) ** (
@@ -118,20 +114,15 @@ def aspic(lnRrad, ns_f, phi0B_start, phi0B_end, nphi0):
         eps1 = norm_eps1(xstar, alpha, phi0 / Mp)
         eps2 = norm_eps2(xstar, alpha, phi0 / Mp)
 
-        ns, r, alpha_s = 1 - 2 * eps1 - eps2, 16 * eps1, 4 * eps1 ** 2 + 2 * eps1 * eps2 + eps2 ** 2
+        ns, r = 1 - 2 * eps1 - eps2, 16 * eps1
         M = (Pstar * 8 * mp.pi ** 2 * Mp ** 2 * eps1 * 3 * Mp ** 2 / norm_potential(xstar, alpha, phi0 / Mp)) ** mp.mpf(
             '0.25')
         mphiBoehm2 = 2 * M ** 4 / (phi0) ** 2
         AB = mp.sqrt(80 * alpha) * M ** 2 / (phi0)
         lambdaB = Mp ** 3 * mp.sqrt(alpha / 5) * M ** 2 / (phi0) ** 5
 
-        print(
-            '\n-------------------------------------------------------------------------------------------------------------------------------\n')
-        print('\nENCYCLOPEDIA  : \nphi0 =', phi0, '\nx* = ', xstar, '\nalpha =', alpha, '\nM =', M)
-        print('\nBOEHM ET AL. : \nphi0B =', phi0B, '\nmphiB =', mphiBoehm2 ** 0.5, '\nlambdaB =', lambdaB, '\nAB =', AB)
-
         phi0B_list.append(phi0B)
-        xstar_list.append(xstar)
+        phistar_list.append(xstar * phi0)
         alpha_list.append(alpha)
         mphi_list.append(mphiBoehm2 ** 0.5)
         A6_list.append(AB)
@@ -139,8 +130,5 @@ def aspic(lnRrad, ns_f, phi0B_start, phi0B_end, nphi0):
         ns_list.append(ns)
         r_list.append(r)
 
-        time_step = time.process_time() - start
-        print("step " + str(i + 1) + "/" + str(nphi0) + " took " + str(time_step) + " sec.\n")
-
-    return phi0B_list, xstar_list, alpha_list, mphi_list, A6_list, lambda6_list, ns_list, r_list
-
+    #     print('□', end='')
+    return phi0B_list, phistar_list, alpha_list, mphi_list, A6_list, lambda6_list, ns_list, r_list
