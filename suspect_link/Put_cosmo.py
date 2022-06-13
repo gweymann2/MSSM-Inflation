@@ -9,9 +9,11 @@ import suspect_bind
 import tree_level
 import scipy.optimize as optimize
 
+# put here a file at any scale (eg EWSB but GUT should work aswell) 
 #initializing_file = "InflationNew_udd_hFun.in"
 initializing_file = "InflationNew_udd_CoAnn.in"
 #initializing_file = "InflationNew_udd_AFun.in"
+
 aa=suspect_bind.suspect()
 m_SLHA=aa.SLHAblock()
 aa.Initialize(initializing_file)
@@ -347,15 +349,15 @@ lnRrad = 0
 As = 2.0989031673191437e-9
 ns = 0.9653
 
-#phi0_res, dv_res, phi_sta_res = phi0_As(As, ns, infl_type)
+phi0_res, dv_res, phi_sta_res = phi0_As(As, ns, infl_type)
 
-phi0_res = 545613800018766.60905
-dv_res = 41.544272492646398023
+#phi0_res = 545613800018766.60905
+#dv_res = 41.544272492646398023
 
 mphiphi0, lambda6phi0 = V_and_Vprime(phi0_res, dv_res, 0, infl_type,*addscale_and_run(phi0_res), give_param=True)
-output_file = 'being_modified.in'
-msq1gut_tilde = msq1gut_vs_mphi0(mphiphi0, phi0_res)
-init_gut = addscale_and_run(3e16)
+#output_file = 'being_modified.in'
+#msq1gut_tilde = msq1gut_vs_mphi0(mphiphi0, phi0_res)
+#init_gut = addscale_and_run(3e16)
 
 
 print('\n--------------------------------------------------------------------------------------------------------------------------------')
@@ -371,8 +373,9 @@ print('phi0_res\tdv_res\n' + nstr(mp.mpf(str(phi0_res)), 8)+'\t'+nstr(mp.mpf(str
 print('\nImplies for params at phi0:')
 print('mphi_0\t\tlambda6_0\n' + nstr(mp.mpf(str(mphiphi0)), 8)+'\t'+nstr(mp.mpf(str(lambda6phi0)), 8))
 
-print('\nIn output file '+str(output_file)+':')
-print('msq1EWSB\tmphigut\t\tlambda6gut\n' + nstr(mp.mpf(str(msq1gut_tilde)), 8)+'\t'+nstr(mp.mpf(str(mphigut)), 8)+'\t'+nstr(mp.mpf(str(lambda6phi0*facteur)), 8))
+print('to be run at GUT, which can be done through just below (needs to be improved)') 
+#print('\nIn output file '+str(output_file)+':')
+#print('msq1EWSB\tmphigut\t\tlambda6gut\n' + nstr(mp.mpf(str(msq1gut_tilde)), 8)+'\t'+nstr(mp.mpf(str(mphigut)), 8)+'\t'+nstr(mp.mpf(str(lambda6phi0*facteur)), 8))
 
 
 print('\n--------------------------------------------------------------------------------------------------------------------------------\n')
